@@ -1,0 +1,14 @@
+---
+- hosts: test
+  tasks:
+  - name: install mariadb
+    yum: name={{item}} pkg=MySQL-python state=latest
+    with_items:
+      - mariadb
+      - mariadb-server
+  - name: start mariadb
+    service:
+      name: mariadb
+      state: started
+      enabled: yes
+

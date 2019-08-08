@@ -1,0 +1,53 @@
+---
+- name: check for firewalld
+  shell: "rpm -q firewalld"
+  register: firewalld_on
+  ignore_errors: yes
+- name: firewalld open 80 port
+  firewalld:
+    service: http
+    permanent: true
+    state: enabled
+  when: firewalld_on.rc == 0
+- name: firewalld open 443 port
+  firewalld:
+    service: https
+    permanent: true
+    state: enabled
+  when: firewalld_on.rc == 0
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+  when: firewalld_on.rc == 0
+   
+- name: iptables 80
+  iptables:
+    chain: INPUT
+    destination_port: 80
+    ctstate: NEW
+    protocol: tcp
+    match: tcp
+    jump: ACCEPT
+     state: present
+  become: yes
+  when: firewalld_on.rc == 1
+  #notify: reboot iptables
+    
+- name: iptables 443
+  iptables:
+    chain: INPUT
+    destination_port: 443
+    ctstate: NEW
+    protocol: tcp
+    match: tcp
+    jump: ACCEPT
+    state: present
+  become: yes
+  when: firewalld_on.rc == 1
+  #notify: reboot iptables
+
+      
+handlers:
+  - name: reboot iptables
+    raw: "service iptables save"

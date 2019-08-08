@@ -1,0 +1,19 @@
+---
+- hosts: test
+  tasks:
+    - name: Download WordPress
+      get_url: url=http://wordpress.org/latest.tar.gz dest=/srv/latest.tar.gz
+    - name: Extract archive
+      unarchive: src=/srv/latest.tar.gz dest=/var/www/html/ remote_src=True
+    - name: group wordpress
+      group: name=wordpress
+    - name: create wordpress db
+      mysql_db: name=wordpress
+    - name: create user
+      mysql_user: name=alex password=Aa123456 priv='*.*:ALL' host='localhost'
+    - name: move file to var/www/html/
+      copy: remote_src=True src=/var/www/html/wordpress/wp-config-sample.php dest=/var/www/html/wp-config.php
+    - name: ownership
+      file: path=/var/www/html/ owner=apache group=wordpress state=directory recurse=yes setype=httpd_sys_content_t remote_src=True
+    - name: start php
+      service: name=httpd state=started enabled=yes

@@ -1,0 +1,6 @@
+---
+- include: install_apache.yaml
+- include: install_php.yaml
+- include: install_mariadb.yaml
+- include: user.yaml
+- include: word.yaml

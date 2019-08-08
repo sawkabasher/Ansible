@@ -1,0 +1,14 @@
+---
+- hosts: test
+  tasks:
+  - name: install php
+    yum: name={{ item }}
+    with_items:
+      - php
+      - php-common
+      - php-mysql
+      - php-gd
+      - php-xml
+      - php-mbstring
+      - php-mcrypt
+      - php-xmlrpc

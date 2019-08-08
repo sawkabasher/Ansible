@@ -1,0 +1,9 @@
+---
+- hosts: test
+  tasks:
+    - name: create user
+      mysql_user:
+        name: german
+        password: Aa123456
+        priv: '*.*:ALL'
+        state: present
